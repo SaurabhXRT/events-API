@@ -1,40 +1,57 @@
-import pino from "pino";
+import pino from "pino"
+import dotenv from "dotenv-flow"
+dotenv.config()
 
 const developmentPinoOptions = {
   transport: {
     target: "pino-pretty",
     options: {
-      colorize: true,
-    },
-  },
-};
-
-function getDevelopmentPinoLogger(pinoOptions: any) {
-  return pino(pinoOptions);
+      colorize: true
+    }
+  }
 }
 
-const errorLogger = getDevelopmentPinoLogger({
-  ...developmentPinoOptions,
-  level: "error",
-});
-const allLogger = getDevelopmentPinoLogger({
-  ...developmentPinoOptions,
-  level: "debug",
-});
+const productionPinoOptions = {
+  transport: {
+    target: "pino-pretty",
+    options: {
+      colorize: true
+    }
+  }
+}
+
+function getProductionPinoLogger(pinoOptions: any, logPath: string) {
+  console.log("Production logging path:" + logPath)
+  return pino({ level: pinoOptions.level }, pino.destination(logPath))
+}
+function getDevelopmentPinoLogger(pinoOptions: any) {
+  return pino(pinoOptions)
+}
+
+const errorLogger =
+  process.env.NODE_ENV === "production"
+    ? getProductionPinoLogger({ ...productionPinoOptions, level: "error" }, `${process.env.LOG_DIR || "."}/error-logger.log`)
+    : getDevelopmentPinoLogger({ ...developmentPinoOptions, level: "error" })
+const allLogger =
+  process.env.NODE_ENV === "production"
+    ? getProductionPinoLogger({ ...productionPinoOptions, level: "info" }, `${process.env.LOG_DIR || "."}/info-logger.log`)
+    : getDevelopmentPinoLogger({ ...developmentPinoOptions, level: "debug" })
 
 function log(message: any, data?: any) {
-  allLogger.debug(data ? data : message, data ? message : undefined);
+  process.env.NODE_ENV === "production"
+    ? allLogger.info(data ? data : message, data ? message : undefined)
+    : allLogger.debug(data ? data : message, data ? message : undefined)
 }
 
 function error(err: any, message?: string) {
-  errorLogger.error(err, message);
+  errorLogger.error(err, message)
 }
 
-// function debug() {}
+function debug() {}
 
-// function fatal() {}
+function fatal() {}
 
-// function warn() {}
+function warn() {}
 
-let logger = { log, error };
-export default logger;
+let logger = { log, error }
+export default logger

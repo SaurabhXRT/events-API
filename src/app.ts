@@ -23,6 +23,11 @@ server.use(function(req, res, next) {
 });
 
 server.use("/v1", searchroutes);
+server.get("/", async(req:any,res:any) => {
+  return res.status(200).json({
+    message: "server is running"
+  });
+});
 
 process.on("uncaughtException", (err) => {
   logger.error("An error occured which was not caught");
