@@ -27,6 +27,7 @@ export class InsiderIN {
       executablePath: await chromium.executablePath,
       headless: true,
       ignoreHTTPSErrors: true,
+      ignoreDefaultArgs: ['--disable-extensions']
     });
     const page = await browser.newPage();
     await page.goto(url, { waitUntil: "networkidle2" });

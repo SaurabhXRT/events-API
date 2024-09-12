@@ -201,7 +201,9 @@ export var puppeteerService = /*#__PURE__*/ function() {
                                 return [
                                     4,
                                     _1.apply(_, [
-                                        (_tmp.executablePath = _state.sent(), _tmp.headless = true, _tmp.ignoreHTTPSErrors = true, _tmp)
+                                        (_tmp.executablePath = _state.sent(), _tmp.headless = true, _tmp.ignoreHTTPSErrors = true, _tmp.ignoreDefaultArgs = [
+                                            '--disable-extensions'
+                                        ], _tmp)
                                     ])
                                 ];
                             case 2:

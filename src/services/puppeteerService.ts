@@ -16,6 +16,7 @@ export class puppeteerService {
       executablePath: await chromium.executablePath,
       headless: true,
       ignoreHTTPSErrors: true,
+      ignoreDefaultArgs: ['--disable-extensions']
     });
     const page = await browser.newPage();
 
