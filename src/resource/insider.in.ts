@@ -21,12 +21,11 @@ export class InsiderIN {
     //   headless: true,
     //   args: ["--no-sandbox", "--disable-setuid-sandbox"],
     // });
-    const browser = await chromium.puppeteer.launch({
-      args: [...chromium.args, "--hide-scrollbars", "--disable-web-security"],
+    const browser = await puppeteer.launch({
+      args: chromium.args,
       defaultViewport: chromium.defaultViewport,
       executablePath: await chromium.executablePath,
       headless: true,
-      ignoreHTTPSErrors: true,
       ignoreDefaultArgs: ['--disable-extensions']
     });
     const page = await browser.newPage();
