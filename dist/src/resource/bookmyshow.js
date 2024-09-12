@@ -143,6 +143,7 @@ function _ts_generator(thisArg, body) {
 }
 import puppeteer from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
+import chromium from '@sparticuz/chromium';
 puppeteer.use(StealthPlugin());
 export var BookMyshow = /*#__PURE__*/ function() {
     "use strict";
@@ -155,27 +156,33 @@ export var BookMyshow = /*#__PURE__*/ function() {
             value: function scrapeBookMyShow(url) {
                 var _this = this;
                 return _async_to_generator(function() {
-                    var browser, page, events, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, event, details, err;
+                    var browser, _, _tmp, page, events, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, event, details, err;
                     return _ts_generator(this, function(_state) {
                         switch(_state.label){
                             case 0:
+                                _ = puppeteer.launch;
+                                _tmp = {
+                                    args: chromium.args,
+                                    defaultViewport: chromium.defaultViewport
+                                };
                                 return [
                                     4,
-                                    puppeteer.launch({
-                                        headless: true,
-                                        args: [
-                                            "--no-sandbox",
-                                            "--disable-setuid-sandbox"
-                                        ]
-                                    })
+                                    chromium.executablePath()
                                 ];
                             case 1:
+                                return [
+                                    4,
+                                    _.apply(puppeteer, [
+                                        (_tmp.executablePath = _state.sent(), _tmp.headless = chromium.headless, _tmp)
+                                    ])
+                                ];
+                            case 2:
                                 browser = _state.sent();
                                 return [
                                     4,
                                     browser.newPage()
                                 ];
-                            case 2:
+                            case 3:
                                 page = _state.sent();
                                 return [
                                     4,
@@ -183,65 +190,65 @@ export var BookMyshow = /*#__PURE__*/ function() {
                                         waitUntil: "networkidle2"
                                     })
                                 ];
-                            case 3:
+                            case 4:
                                 _state.sent();
                                 return [
                                     4,
                                     _this.scrapeBookMyShowMainPage(page)
                                 ];
-                            case 4:
+                            case 5:
                                 events = _state.sent();
                                 _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
-                                _state.label = 5;
-                            case 5:
-                                _state.trys.push([
-                                    5,
-                                    10,
-                                    11,
-                                    12
-                                ]);
-                                _iterator = events[Symbol.iterator]();
                                 _state.label = 6;
                             case 6:
+                                _state.trys.push([
+                                    6,
+                                    11,
+                                    12,
+                                    13
+                                ]);
+                                _iterator = events[Symbol.iterator]();
+                                _state.label = 7;
+                            case 7:
                                 if (!!(_iteratorNormalCompletion = (_step = _iterator.next()).done)) return [
                                     3,
-                                    9
+                                    10
                                 ];
                                 event = _step.value;
                                 if (!event.link) return [
                                     3,
-                                    8
+                                    9
                                 ];
                                 return [
                                     4,
                                     _this.scrapeBookMyShowEventPage(browser, event.link)
                                 ];
-                            case 7:
+                            case 8:
                                 details = _state.sent();
                                 event.moreinformation = details.moreinformation;
                                 event.eventTime = details.eventTime;
                                 event.description = details.description;
-                                _state.label = 8;
-                            case 8:
+                                _state.label = 9;
+                            case 9:
                                 _iteratorNormalCompletion = true;
                                 return [
                                     3,
-                                    6
-                                ];
-                            case 9:
-                                return [
-                                    3,
-                                    12
+                                    7
                                 ];
                             case 10:
+                                return [
+                                    3,
+                                    13
+                                ];
+                            case 11:
                                 err = _state.sent();
                                 _didIteratorError = true;
                                 _iteratorError = err;
                                 return [
                                     3,
-                                    12
+                                    13
                                 ];
-                            case 11:
+                            case 12:
                                 try {
                                     if (!_iteratorNormalCompletion && _iterator.return != null) {
                                         _iterator.return();
@@ -254,12 +261,12 @@ export var BookMyshow = /*#__PURE__*/ function() {
                                 return [
                                     7
                                 ];
-                            case 12:
+                            case 13:
                                 return [
                                     4,
                                     page.close()
                                 ];
-                            case 13:
+                            case 14:
                                 _state.sent();
                                 return [
                                     2,

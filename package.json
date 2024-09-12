@@ -15,7 +15,8 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-   "@swc/cli": "^0.4.0",
+    "@sparticuz/chromium": "^127.0.0",
+    "@swc/cli": "^0.4.0",
     "@swc/core": "^1.7.26",
     "@tsconfig/node20": "^20.1.4",
     "@types/bcrypt": "^5.0.2",

@@ -1,7 +1,7 @@
 import { Page } from "puppeteer";
 import puppeteer from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
-
+import chromium from '@sparticuz/chromium';
 puppeteer.use(StealthPlugin());
 
 interface EventDetails {
@@ -18,9 +18,16 @@ interface EventDetails {
 
 export class BookMyshow {
   async scrapeBookMyShow(url: any): Promise<EventDetails[]> {
+    // const browser = await puppeteer.launch({
+    //   headless: true,
+    //   args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    // });
+
     const browser = await puppeteer.launch({
-      headless: true,
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+      args: chromium.args,
+      defaultViewport: chromium.defaultViewport,
+      executablePath: await chromium.executablePath(),
+      headless: chromium.headless,
     });
     const page = await browser.newPage();
     await page.goto(url, { waitUntil: "networkidle2" });

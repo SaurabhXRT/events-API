@@ -1,14 +1,20 @@
 import puppeteer from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
-
+import chromium from '@sparticuz/chromium';
 
 puppeteer.use(StealthPlugin());
 
 export class puppeteerService {
   async puppeteerRun(searchquery: string) {
-    const browser = await puppeteer.launch({
-        headless: true, 
-        args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    // const browser = await puppeteer.launch({
+    //     headless: true, 
+    //     args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    //   });
+      const browser = await puppeteer.launch({
+        args: chromium.args,
+        defaultViewport: chromium.defaultViewport,
+        executablePath: await chromium.executablePath(),
+        headless: chromium.headless,
       });
     const page = await browser.newPage();
 

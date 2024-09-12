@@ -143,6 +143,7 @@ function _ts_generator(thisArg, body) {
 }
 import puppeteer from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
+import chromium from '@sparticuz/chromium';
 puppeteer.use(StealthPlugin());
 export var Allevents = /*#__PURE__*/ function() {
     "use strict";
@@ -155,27 +156,33 @@ export var Allevents = /*#__PURE__*/ function() {
             value: function scrapeAllevents(url) {
                 var _this = this;
                 return _async_to_generator(function() {
-                    var browser, page, events;
+                    var browser, _, _tmp, page, events;
                     return _ts_generator(this, function(_state) {
                         switch(_state.label){
                             case 0:
+                                _ = puppeteer.launch;
+                                _tmp = {
+                                    args: chromium.args,
+                                    defaultViewport: chromium.defaultViewport
+                                };
                                 return [
                                     4,
-                                    puppeteer.launch({
-                                        headless: true,
-                                        args: [
-                                            "--no-sandbox",
-                                            "--disable-setuid-sandbox"
-                                        ]
-                                    })
+                                    chromium.executablePath()
                                 ];
                             case 1:
+                                return [
+                                    4,
+                                    _.apply(puppeteer, [
+                                        (_tmp.executablePath = _state.sent(), _tmp.headless = chromium.headless, _tmp)
+                                    ])
+                                ];
+                            case 2:
                                 browser = _state.sent();
                                 return [
                                     4,
                                     browser.newPage()
                                 ];
-                            case 2:
+                            case 3:
                                 page = _state.sent();
                                 return [
                                     4,
@@ -183,19 +190,19 @@ export var Allevents = /*#__PURE__*/ function() {
                                         waitUntil: "networkidle2"
                                     })
                                 ];
-                            case 3:
+                            case 4:
                                 _state.sent();
                                 return [
                                     4,
                                     _this.scrapAlleventsMainPage(page)
                                 ];
-                            case 4:
+                            case 5:
                                 events = _state.sent();
                                 return [
                                     4,
                                     page.close()
                                 ];
-                            case 5:
+                            case 6:
                                 _state.sent();
                                 return [
                                     2,
