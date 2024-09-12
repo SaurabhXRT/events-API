@@ -12,12 +12,7 @@ const developmentPinoOptions = {
 }
 
 const productionPinoOptions = {
-  transport: {
-    target: "pino-pretty",
-    options: {
-      colorize: true
-    }
-  }
+ 
 }
 
 function getProductionPinoLogger(pinoOptions: any, logPath: string) {
