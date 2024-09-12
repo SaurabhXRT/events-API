@@ -51,6 +51,8 @@ function _object_spread_props(target, source) {
     return target;
 }
 import pino from "pino";
+import dotenv from "dotenv-flow";
+dotenv.config();
 var developmentPinoOptions = {
     transport: {
         target: "pino-pretty",
@@ -59,24 +61,42 @@ var developmentPinoOptions = {
         }
     }
 };
+var productionPinoOptions = {
+    transport: {
+        target: "pino-pretty",
+        options: {
+            colorize: true
+        }
+    }
+};
+function getProductionPinoLogger(pinoOptions, logPath) {
+    console.log("Production logging path:" + logPath);
+    return pino({
+        level: pinoOptions.level
+    }, pino.destination(logPath));
+}
 function getDevelopmentPinoLogger(pinoOptions) {
     return pino(pinoOptions);
 }
-var errorLogger = getDevelopmentPinoLogger(_object_spread_props(_object_spread({}, developmentPinoOptions), {
+var errorLogger = process.env.NODE_ENV === "production" ? getProductionPinoLogger(_object_spread_props(_object_spread({}, productionPinoOptions), {
+    level: "error"
+}), "".concat(process.env.LOG_DIR || ".", "/error-logger.log")) : getDevelopmentPinoLogger(_object_spread_props(_object_spread({}, developmentPinoOptions), {
     level: "error"
 }));
-var allLogger = getDevelopmentPinoLogger(_object_spread_props(_object_spread({}, developmentPinoOptions), {
+var allLogger = process.env.NODE_ENV === "production" ? getProductionPinoLogger(_object_spread_props(_object_spread({}, productionPinoOptions), {
+    level: "info"
+}), "".concat(process.env.LOG_DIR || ".", "/info-logger.log")) : getDevelopmentPinoLogger(_object_spread_props(_object_spread({}, developmentPinoOptions), {
     level: "debug"
 }));
 function log(message, data) {
-    allLogger.debug(data ? data : message, data ? message : undefined);
+    process.env.NODE_ENV === "production" ? allLogger.info(data ? data : message, data ? message : undefined) : allLogger.debug(data ? data : message, data ? message : undefined);
 }
 function error(err, message) {
     errorLogger.error(err, message);
 }
-// function debug() {}
-// function fatal() {}
-// function warn() {}
+function debug() {}
+function fatal() {}
+function warn() {}
 var logger = {
     log: log,
     error: error
