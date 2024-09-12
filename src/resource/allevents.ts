@@ -1,8 +1,9 @@
 import { Page } from "puppeteer";
-import puppeteer from "puppeteer-extra";
+import puppeteerExtra from 'puppeteer-extra';
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
-import chromium from 'chrome-aws-lambda';
-puppeteer.use(StealthPlugin());
+import chromium from "chrome-aws-lambda";
+import puppeteer from 'puppeteer-core';
+puppeteerExtra.use(StealthPlugin());
 
 interface EventDetails {
   title: string;
@@ -22,12 +23,11 @@ export class Allevents {
     //   args: ["--no-sandbox", "--disable-setuid-sandbox"],
     // });
 
-    const browser = await puppeteer.launch({
+    const browser = await puppeteerExtra.launch({
       args: chromium.args,
       defaultViewport: chromium.defaultViewport,
       executablePath: await chromium.executablePath,
       headless: true,
-      ignoreDefaultArgs: ['--disable-extensions']
     });
     const page = await browser.newPage();
     await page.goto(url, { waitUntil: "networkidle2" });

@@ -141,10 +141,10 @@ function _ts_generator(thisArg, body) {
         };
     }
 }
-import puppeteer from "puppeteer-extra";
+import puppeteerExtra from 'puppeteer-extra';
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
-import chromium from 'chrome-aws-lambda';
-puppeteer.use(StealthPlugin());
+import chromium from "chrome-aws-lambda";
+puppeteerExtra.use(StealthPlugin());
 export var Allevents = /*#__PURE__*/ function() {
     "use strict";
     function Allevents() {
@@ -160,7 +160,7 @@ export var Allevents = /*#__PURE__*/ function() {
                     return _ts_generator(this, function(_state) {
                         switch(_state.label){
                             case 0:
-                                _ = puppeteer.launch;
+                                _ = puppeteerExtra.launch;
                                 _tmp = {
                                     args: chromium.args,
                                     defaultViewport: chromium.defaultViewport
@@ -172,10 +172,8 @@ export var Allevents = /*#__PURE__*/ function() {
                             case 1:
                                 return [
                                     4,
-                                    _.apply(puppeteer, [
-                                        (_tmp.executablePath = _state.sent(), _tmp.headless = true, _tmp.ignoreDefaultArgs = [
-                                            '--disable-extensions'
-                                        ], _tmp)
+                                    _.apply(puppeteerExtra, [
+                                        (_tmp.executablePath = _state.sent(), _tmp.headless = true, _tmp)
                                     ])
                                 ];
                             case 2:
