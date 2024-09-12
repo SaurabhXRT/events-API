@@ -1,7 +1,7 @@
 import { Page } from "puppeteer";
 import puppeteer from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
-import chromium from '@sparticuz/chromium';
+import chromium from 'chrome-aws-lambda';
 puppeteer.use(StealthPlugin());
 
 interface EventDetails {
@@ -21,11 +21,12 @@ export class InsiderIN {
     //   headless: true,
     //   args: ["--no-sandbox", "--disable-setuid-sandbox"],
     // });
-    const browser = await puppeteer.launch({
-      args: chromium.args,
+    const browser = await chromium.puppeteer.launch({
+      args: [...chromium.args, "--hide-scrollbars", "--disable-web-security"],
       defaultViewport: chromium.defaultViewport,
-      executablePath: await chromium.executablePath(),
-      headless: chromium.headless,
+      executablePath: await chromium.executablePath,
+      headless: true,
+      ignoreHTTPSErrors: true,
     });
     const page = await browser.newPage();
     await page.goto(url, { waitUntil: "networkidle2" });
