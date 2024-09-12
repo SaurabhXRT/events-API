@@ -1,6 +1,6 @@
 import express, { Request, Response } from "express";
 import cors from "cors";
-import logger from "./logger/logger.js";
+//import logger from "./logger/logger.js";
 import bodyParser from "body-parser";
 import searchroutes from "./routes/search.js";
 
@@ -30,13 +30,13 @@ server.get("/", async(req:any,res:any) => {
 });
 
 process.on("uncaughtException", (err) => {
-  logger.error("An error occured which was not caught");
-  logger.error(err);
+  console.error("An error occured which was not caught");
+  console.error(err);
 });
 
 process.on("unhandledRejection", (err) => {
-  logger.error("An  unhandled rejection was caught");
-  logger.error(err);
+  console.error("An  unhandled rejection was caught");
+  console.error(err);
 });
 
 export default server;

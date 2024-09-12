@@ -124,7 +124,7 @@ function _ts_generator(thisArg, body) {
 }
 import express from "express";
 var router = express.Router();
-import logger from "../logger/logger.js";
+//import logger from "../logger/logger.js";
 import { SearchService } from "../services/searchService.js";
 import { redisGetAsync, redisSetAsync } from "../redis/redis.js";
 import { isValidQuery } from "../helpers/urlHelpers.js";
@@ -206,7 +206,7 @@ router.get("/search", /*#__PURE__*/ function() {
                     ];
                 case 7:
                     error = _state.sent();
-                    logger.log(error);
+                    console.log(error);
                     res.status(500).json({
                         message: "internal server error occured"
                     });
