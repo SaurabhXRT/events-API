@@ -37,6 +37,7 @@
     "esbuild": "^0.23.1",
     "express": "^4.20.0",
     "jsonwebtoken": "^9.0.2",
+    "path": "^0.12.7",
     "pino": "^9.4.0",
     "pino-pretty": "^11.2.2",
     "puppeteer": "^23.3.0",

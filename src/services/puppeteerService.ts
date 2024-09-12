@@ -1,8 +1,8 @@
-import puppeteerExtra from 'puppeteer-extra';
+import puppeteer from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
-import chromium from "chrome-aws-lambda";
-import puppeteer from 'puppeteer-core';
-puppeteerExtra.use(StealthPlugin());
+//import chromium from "chrome-aws-lambda";
+import path from 'path';
+puppeteer.use(StealthPlugin());
 
 export class puppeteerService {
   async puppeteerRun(searchquery: string) {
@@ -10,11 +10,12 @@ export class puppeteerService {
     //     headless: true,
     //     args: ['--no-sandbox', '--disable-setuid-sandbox'],
     //   });
-    const browser = await puppeteerExtra.launch({
-      args: chromium.args,
-      defaultViewport: chromium.defaultViewport,
-      executablePath: await chromium.executablePath,
+    const browser = await puppeteer.launch({
       headless: true,
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+      executablePath: path.resolve(
+        '/opt/render/.cache/puppeteer/chrome-linux/chrome'
+      ), // Manually specify the executable path
     });
     const page = await browser.newPage();
 

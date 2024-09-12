@@ -141,10 +141,11 @@ function _ts_generator(thisArg, body) {
         };
     }
 }
-import puppeteerExtra from 'puppeteer-extra';
+import puppeteer from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
-import chromium from "chrome-aws-lambda";
-puppeteerExtra.use(StealthPlugin());
+//import chromium from "chrome-aws-lambda";
+import path from 'path';
+puppeteer.use(StealthPlugin());
 export var puppeteerService = /*#__PURE__*/ function() {
     "use strict";
     function puppeteerService() {
@@ -156,33 +157,28 @@ export var puppeteerService = /*#__PURE__*/ function() {
             value: function puppeteerRun(searchquery) {
                 var _this = this;
                 return _async_to_generator(function() {
-                    var browser, _, _tmp, page, url, hrefs;
+                    var browser, page, url, hrefs;
                     return _ts_generator(this, function(_state) {
                         switch(_state.label){
                             case 0:
-                                _ = puppeteerExtra.launch;
-                                _tmp = {
-                                    args: chromium.args,
-                                    defaultViewport: chromium.defaultViewport
-                                };
                                 return [
                                     4,
-                                    chromium.executablePath
+                                    puppeteer.launch({
+                                        headless: true,
+                                        args: [
+                                            '--no-sandbox',
+                                            '--disable-setuid-sandbox'
+                                        ],
+                                        executablePath: path.resolve('/opt/render/.cache/puppeteer/chrome-linux/chrome')
+                                    })
                                 ];
                             case 1:
-                                return [
-                                    4,
-                                    _.apply(puppeteerExtra, [
-                                        (_tmp.executablePath = _state.sent(), _tmp.headless = true, _tmp)
-                                    ])
-                                ];
-                            case 2:
                                 browser = _state.sent();
                                 return [
                                     4,
                                     browser.newPage()
                                 ];
-                            case 3:
+                            case 2:
                                 page = _state.sent();
                                 console.log("Starting to search by: ".concat(searchquery));
                                 url = "https://www.google.com/search?q=".concat(searchquery);
@@ -192,19 +188,19 @@ export var puppeteerService = /*#__PURE__*/ function() {
                                         waitUntil: "networkidle2"
                                     })
                                 ];
-                            case 4:
+                            case 3:
                                 _state.sent();
                                 return [
                                     4,
                                     _this.ScanforLinks(page)
                                 ];
-                            case 5:
+                            case 4:
                                 hrefs = _state.sent();
                                 return [
                                     4,
                                     browser.close()
                                 ];
-                            case 6:
+                            case 5:
                                 _state.sent();
                                 return [
                                     2,
