@@ -1,6 +1,6 @@
 import express  from "express";
 const router = express.Router();
-//import logger from "../logger/logger.js";
+import logger from "../logger/logger.js";
 import { SearchService } from "../services/searchService.js";
 import { redisGetAsync, redisSetAsync } from "../redis/redis.js";
 import { isValidQuery } from "../helpers/urlHelpers.js";
@@ -36,7 +36,7 @@ router.get("/search", async(req:any,res:any) => {
             data: response,
         });
     }catch(error){
-        console.log(error);
+        logger.log(error);
         res.status(500).json({
             message: "internal server error occured",
         });

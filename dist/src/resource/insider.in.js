@@ -1,3 +1,11 @@
+function _array_like_to_array(arr, len) {
+    if (len == null || len > arr.length) len = arr.length;
+    for(var i = 0, arr2 = new Array(len); i < len; i++)arr2[i] = arr[i];
+    return arr2;
+}
+function _array_without_holes(arr) {
+    if (Array.isArray(arr)) return _array_like_to_array(arr);
+}
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
     try {
         var info = gen[key](arg);
@@ -45,6 +53,23 @@ function _create_class(Constructor, protoProps, staticProps) {
     if (protoProps) _defineProperties(Constructor.prototype, protoProps);
     if (staticProps) _defineProperties(Constructor, staticProps);
     return Constructor;
+}
+function _iterable_to_array(iter) {
+    if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter);
+}
+function _non_iterable_spread() {
+    throw new TypeError("Invalid attempt to spread non-iterable instance.\\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+}
+function _to_consumable_array(arr) {
+    return _array_without_holes(arr) || _iterable_to_array(arr) || _unsupported_iterable_to_array(arr) || _non_iterable_spread();
+}
+function _unsupported_iterable_to_array(o, minLen) {
+    if (!o) return;
+    if (typeof o === "string") return _array_like_to_array(o, minLen);
+    var n = Object.prototype.toString.call(o).slice(8, -1);
+    if (n === "Object" && o.constructor) n = o.constructor.name;
+    if (n === "Map" || n === "Set") return Array.from(n);
+    if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _array_like_to_array(o, minLen);
 }
 function _ts_generator(thisArg, body) {
     var f, y, t, g, _ = {
@@ -141,11 +166,11 @@ function _ts_generator(thisArg, body) {
         };
     }
 }
-import puppeteer from "puppeteer-extra";
-import StealthPlugin from "puppeteer-extra-plugin-stealth";
-//import chromium from "chrome-aws-lambda";
-import path from 'path';
-puppeteer.use(StealthPlugin());
+// import puppeteer from "puppeteer-extra";
+// import StealthPlugin from "puppeteer-extra-plugin-stealth";
+// puppeteer.use(StealthPlugin());
+import chrome from "chrome-aws-lambda";
+import puppeteer from "puppeteer-core";
 export var InsiderIN = /*#__PURE__*/ function() {
     "use strict";
     function InsiderIN() {
@@ -157,52 +182,78 @@ export var InsiderIN = /*#__PURE__*/ function() {
             value: function scrapeInsiderIn(url) {
                 var _this = this;
                 return _async_to_generator(function() {
-                    var browser, page, events;
+                    var options, _tmp, browser, page, events, error;
                     return _ts_generator(this, function(_state) {
                         switch(_state.label){
                             case 0:
+                                _state.trys.push([
+                                    0,
+                                    7,
+                                    ,
+                                    8
+                                ]);
+                                options = {};
+                                _tmp = {
+                                    args: _to_consumable_array(chrome.args).concat([
+                                        "--hide-scrollbars",
+                                        "--disable-web-security"
+                                    ]),
+                                    defaultViewport: chrome.defaultViewport
+                                };
                                 return [
                                     4,
-                                    puppeteer.launch({
-                                        headless: true,
-                                        args: [
-                                            '--no-sandbox',
-                                            '--disable-setuid-sandbox'
-                                        ],
-                                        executablePath: path.resolve('/opt/render/.cache/puppeteer/chrome-linux/chrome')
-                                    })
+                                    chrome.executablePath
                                 ];
                             case 1:
+                                options = (_tmp.executablePath = _state.sent(), _tmp.headless = true, _tmp.ignoreHTTPSErrors = true, _tmp);
+                                return [
+                                    4,
+                                    puppeteer.launch(options)
+                                ];
+                            case 2:
                                 browser = _state.sent();
                                 return [
                                     4,
                                     browser.newPage()
                                 ];
-                            case 2:
+                            case 3:
                                 page = _state.sent();
+                                page.setDefaultNavigationTimeout(60000);
                                 return [
                                     4,
                                     page.goto(url, {
-                                        waitUntil: "networkidle2"
+                                        waitUntil: "networkidle2",
+                                        timeout: 60000
                                     })
                                 ];
-                            case 3:
+                            case 4:
                                 _state.sent();
                                 return [
                                     4,
                                     _this.scrapeInsiderInMainPage(page)
                                 ];
-                            case 4:
+                            case 5:
                                 events = _state.sent();
                                 return [
                                     4,
                                     page.close()
                                 ];
-                            case 5:
+                            case 6:
                                 _state.sent();
                                 return [
                                     2,
                                     events
+                                ];
+                            case 7:
+                                error = _state.sent();
+                                // console.log(error);
+                                return [
+                                    2,
+                                    []
+                                ];
+                            case 8:
+                                return [
+                                    2
                                 ];
                         }
                     });
@@ -213,10 +264,16 @@ export var InsiderIN = /*#__PURE__*/ function() {
             key: "scrapeInsiderInMainPage",
             value: function scrapeInsiderInMainPage(page) {
                 return _async_to_generator(function() {
-                    var selectorExists, events;
+                    var selectorExists, events, error;
                     return _ts_generator(this, function(_state) {
                         switch(_state.label){
                             case 0:
+                                _state.trys.push([
+                                    0,
+                                    5,
+                                    ,
+                                    6
+                                ]);
                                 return [
                                     4,
                                     page.evaluate(function() {
@@ -273,6 +330,17 @@ export var InsiderIN = /*#__PURE__*/ function() {
                                 return [
                                     2,
                                     events
+                                ];
+                            case 5:
+                                error = _state.sent();
+                                // console.log(error);
+                                return [
+                                    2,
+                                    []
+                                ];
+                            case 6:
+                                return [
+                                    2
                                 ];
                         }
                     });

@@ -1,5 +1,5 @@
 import { puppeteerService } from "./puppeteerService.js";
-//import logger from "../logger/logger.js";
+import logger from "../logger/logger.js";
 import { BookMyshow } from "../resource/bookmyshow.js";
 import { InsiderIN } from "../resource/insider.in.js";
 import { Allevents } from "../resource/allevents.js";
@@ -25,15 +25,15 @@ export class SearchService {
 
     for(const url of response) {
         if (isBookMyShowUrl(url)) {
-          console.log(`Processing BookMyShow URL: ${url}`);
+          logger.log(`Processing BookMyShow URL: ${url}`);
           const events = await bookmyshowservice.scrapeBookMyShow(url);
           results.push(...events);
         } else if (isInsiderInUrl(url)) {
-          console.log(`Processing InsiderIN URL: ${url}`);
+          logger.log(`Processing InsiderIN URL: ${url}`);
           const events = await insiderinservice.scrapeInsiderIn(url);
           results.push(...events);
         } else if (isAlleventsUrl(url)) {
-          console.log(`Processing Allevents URL: ${url}`);
+          logger.log(`Processing Allevents URL: ${url}`);
           const events = await alleventsservice.scrapeAllevents(url);
           results.push(...events);
         }
@@ -41,7 +41,7 @@ export class SearchService {
       //console.log(results);
       return results;
     } catch (error) {
-      console.log(error);
+      logger.log(error);
       throw new Error("error while getting events data");
     }
   }

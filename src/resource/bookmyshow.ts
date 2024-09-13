@@ -1,9 +1,11 @@
 import { Page } from "puppeteer";
-import puppeteer from "puppeteer-extra";
-import StealthPlugin from "puppeteer-extra-plugin-stealth";
-//import chromium from "chrome-aws-lambda";
-import path from 'path';
-puppeteer.use(StealthPlugin());
+// import puppeteer from "puppeteer-extra";
+// import StealthPlugin from "puppeteer-extra-plugin-stealth";
+// puppeteer.use(StealthPlugin());
+
+import chrome from "chrome-aws-lambda";
+import puppeteer from "puppeteer-core";
+
 
 interface EventDetails {
   title: string;
@@ -19,67 +21,81 @@ interface EventDetails {
 
 export class BookMyshow {
   async scrapeBookMyShow(url: any): Promise<EventDetails[]> {
-    // const browser = await puppeteer.launch({
-    //   headless: true,
-    //   args: ["--no-sandbox", "--disable-setuid-sandbox"],
-    // });
+    try {
+      
+      let options = {};
+      options = {
+        args: [...chrome.args, "--hide-scrollbars", "--disable-web-security"],
+        defaultViewport: chrome.defaultViewport,
+        executablePath: await chrome.executablePath,
+        headless: true,
+        ignoreHTTPSErrors: true,
+      };
+      const browser = await puppeteer.launch(options);
+     
+      // const browser = await puppeteer.launch({
+      //     headless: true,
+      //     args: ['--no-sandbox', '--disable-setuid-sandbox'],
+      //   });
+      const page = await browser.newPage();
+      page.setDefaultNavigationTimeout(60000);
+      await page.goto(url, { waitUntil: "networkidle2", timeout: 60000 });
 
-    const browser = await puppeteer.launch({
-      headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox'],
-      executablePath: path.resolve(
-        '/opt/render/.cache/puppeteer/chrome-linux/chrome'
-      ), // Manually specify the executable path
-    });
-    const page = await browser.newPage();
-    await page.goto(url, { waitUntil: "networkidle2" });
+      const events = await this.scrapeBookMyShowMainPage(page);
 
-    const events = await this.scrapeBookMyShowMainPage(page);
-
-    for (const event of events) {
-      if (event.link) {
-        const details = await this.scrapeBookMyShowEventPage(
-          browser,
-          event.link
-        );
-        event.moreinformation = details.moreinformation;
-        event.eventTime = details.eventTime;
-        event.description = details.description;
-      }
+      // for (const event of events) {
+      //   if (event.link) {
+      //     const details = await this.scrapeBookMyShowEventPage(
+      //       browser,
+      //       event.link
+      //     );
+      //     event.moreinformation = details.moreinformation;
+      //     event.eventTime = details.eventTime;
+      //     event.description = details.description;
+      //   }
+      // }
+      await page.close();
+      return events;
+    } catch (error) {
+      // console.log(error);
+      return [];
     }
-    await page.close();
-    return events;
   }
 
   async scrapeBookMyShowMainPage(page: Page): Promise<EventDetails[]> {
-    const selectorExists = await page.evaluate(() => {
-      return document.querySelector(".kLLnFs") !== null;
-    });
-    if(!selectorExists){
+    try {
+      const selectorExists = await page.evaluate(() => {
+        return document.querySelector(".kLLnFs") !== null;
+      });
+      if (!selectorExists) {
+        return [];
+      }
+      await page.waitForSelector(".kLLnFs");
+      await page.click(".kLLnFs");
+      const events: EventDetails[] = await page.evaluate(() => {
+        const eventCards = document.querySelectorAll(
+          "a.commonStyles__LinkWrapper-sc-133848s-11"
+        );
+        return Array.from(eventCards).map((card) => {
+          const title = card.querySelector(".dxpBCo")?.textContent || "";
+          const venue = card.querySelector(".fUgjVu")?.textContent || "";
+          const typeElements = card.querySelectorAll(".dgMmMO");
+          const type = typeElements[0]?.textContent || "No type";
+          const price = typeElements[1]?.textContent || "No price";
+          const link = (card as HTMLAnchorElement).href || "";
+          const imageUrl = card.querySelector("img")?.src || "";
+
+          console.log(link);
+          console.log(card.outerHTML);
+
+          return { title, venue, type, price, imageUrl, link };
+        });
+      });
+      return events;
+    } catch (error) {
+      // console.log(error);
       return [];
     }
-    await page.waitForSelector(".kLLnFs");
-    await page.click(".kLLnFs");
-    const events: EventDetails[] = await page.evaluate(() => {
-      const eventCards = document.querySelectorAll(
-        "a.commonStyles__LinkWrapper-sc-133848s-11"
-      );
-      return Array.from(eventCards).map((card) => {
-        const title = card.querySelector(".dxpBCo")?.textContent || "";
-        const venue = card.querySelector(".fUgjVu")?.textContent || "";
-        const typeElements = card.querySelectorAll(".dgMmMO");
-        const type = typeElements[0]?.textContent || "No type";
-        const price = typeElements[1]?.textContent || "No price";
-        const link = (card as HTMLAnchorElement).href || "";
-        const imageUrl = card.querySelector("img")?.src || "";
-
-        console.log(link);
-        console.log(card.outerHTML);
-
-        return { title, venue, type, price, imageUrl, link };
-      });
-    });
-    return events;
   }
 
   async scrapeBookMyShowEventPage(browser: any, eventLink: any) {

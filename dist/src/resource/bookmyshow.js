@@ -1,3 +1,11 @@
+function _array_like_to_array(arr, len) {
+    if (len == null || len > arr.length) len = arr.length;
+    for(var i = 0, arr2 = new Array(len); i < len; i++)arr2[i] = arr[i];
+    return arr2;
+}
+function _array_without_holes(arr) {
+    if (Array.isArray(arr)) return _array_like_to_array(arr);
+}
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
     try {
         var info = gen[key](arg);
@@ -45,6 +53,23 @@ function _create_class(Constructor, protoProps, staticProps) {
     if (protoProps) _defineProperties(Constructor.prototype, protoProps);
     if (staticProps) _defineProperties(Constructor, staticProps);
     return Constructor;
+}
+function _iterable_to_array(iter) {
+    if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter);
+}
+function _non_iterable_spread() {
+    throw new TypeError("Invalid attempt to spread non-iterable instance.\\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+}
+function _to_consumable_array(arr) {
+    return _array_without_holes(arr) || _iterable_to_array(arr) || _unsupported_iterable_to_array(arr) || _non_iterable_spread();
+}
+function _unsupported_iterable_to_array(o, minLen) {
+    if (!o) return;
+    if (typeof o === "string") return _array_like_to_array(o, minLen);
+    var n = Object.prototype.toString.call(o).slice(8, -1);
+    if (n === "Object" && o.constructor) n = o.constructor.name;
+    if (n === "Map" || n === "Set") return Array.from(n);
+    if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _array_like_to_array(o, minLen);
 }
 function _ts_generator(thisArg, body) {
     var f, y, t, g, _ = {
@@ -141,11 +166,11 @@ function _ts_generator(thisArg, body) {
         };
     }
 }
-import puppeteer from "puppeteer-extra";
-import StealthPlugin from "puppeteer-extra-plugin-stealth";
-//import chromium from "chrome-aws-lambda";
-import path from 'path';
-puppeteer.use(StealthPlugin());
+// import puppeteer from "puppeteer-extra";
+// import StealthPlugin from "puppeteer-extra-plugin-stealth";
+// puppeteer.use(StealthPlugin());
+import chrome from "chrome-aws-lambda";
+import puppeteer from "puppeteer-core";
 export var BookMyshow = /*#__PURE__*/ function() {
     "use strict";
     function BookMyshow() {
@@ -157,116 +182,89 @@ export var BookMyshow = /*#__PURE__*/ function() {
             value: function scrapeBookMyShow(url) {
                 var _this = this;
                 return _async_to_generator(function() {
-                    var browser, page, events, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, event, details, err;
+                    var options, _tmp, browser, page, events, error;
                     return _ts_generator(this, function(_state) {
                         switch(_state.label){
                             case 0:
+                                _state.trys.push([
+                                    0,
+                                    7,
+                                    ,
+                                    8
+                                ]);
+                                options = {};
+                                _tmp = {
+                                    args: _to_consumable_array(chrome.args).concat([
+                                        "--hide-scrollbars",
+                                        "--disable-web-security"
+                                    ]),
+                                    defaultViewport: chrome.defaultViewport
+                                };
                                 return [
                                     4,
-                                    puppeteer.launch({
-                                        headless: true,
-                                        args: [
-                                            '--no-sandbox',
-                                            '--disable-setuid-sandbox'
-                                        ],
-                                        executablePath: path.resolve('/opt/render/.cache/puppeteer/chrome-linux/chrome')
-                                    })
+                                    chrome.executablePath
                                 ];
                             case 1:
+                                options = (_tmp.executablePath = _state.sent(), _tmp.headless = true, _tmp.ignoreHTTPSErrors = true, _tmp);
+                                return [
+                                    4,
+                                    puppeteer.launch(options)
+                                ];
+                            case 2:
                                 browser = _state.sent();
                                 return [
                                     4,
                                     browser.newPage()
                                 ];
-                            case 2:
+                            case 3:
                                 page = _state.sent();
+                                page.setDefaultNavigationTimeout(60000);
                                 return [
                                     4,
                                     page.goto(url, {
-                                        waitUntil: "networkidle2"
+                                        waitUntil: "networkidle2",
+                                        timeout: 60000
                                     })
                                 ];
-                            case 3:
+                            case 4:
                                 _state.sent();
                                 return [
                                     4,
                                     _this.scrapeBookMyShowMainPage(page)
                                 ];
-                            case 4:
-                                events = _state.sent();
-                                _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
-                                _state.label = 5;
                             case 5:
-                                _state.trys.push([
-                                    5,
-                                    10,
-                                    11,
-                                    12
-                                ]);
-                                _iterator = events[Symbol.iterator]();
-                                _state.label = 6;
-                            case 6:
-                                if (!!(_iteratorNormalCompletion = (_step = _iterator.next()).done)) return [
-                                    3,
-                                    9
-                                ];
-                                event = _step.value;
-                                if (!event.link) return [
-                                    3,
-                                    8
-                                ];
-                                return [
-                                    4,
-                                    _this.scrapeBookMyShowEventPage(browser, event.link)
-                                ];
-                            case 7:
-                                details = _state.sent();
-                                event.moreinformation = details.moreinformation;
-                                event.eventTime = details.eventTime;
-                                event.description = details.description;
-                                _state.label = 8;
-                            case 8:
-                                _iteratorNormalCompletion = true;
-                                return [
-                                    3,
-                                    6
-                                ];
-                            case 9:
-                                return [
-                                    3,
-                                    12
-                                ];
-                            case 10:
-                                err = _state.sent();
-                                _didIteratorError = true;
-                                _iteratorError = err;
-                                return [
-                                    3,
-                                    12
-                                ];
-                            case 11:
-                                try {
-                                    if (!_iteratorNormalCompletion && _iterator.return != null) {
-                                        _iterator.return();
-                                    }
-                                } finally{
-                                    if (_didIteratorError) {
-                                        throw _iteratorError;
-                                    }
-                                }
-                                return [
-                                    7
-                                ];
-                            case 12:
+                                events = _state.sent();
+                                // for (const event of events) {
+                                //   if (event.link) {
+                                //     const details = await this.scrapeBookMyShowEventPage(
+                                //       browser,
+                                //       event.link
+                                //     );
+                                //     event.moreinformation = details.moreinformation;
+                                //     event.eventTime = details.eventTime;
+                                //     event.description = details.description;
+                                //   }
+                                // }
                                 return [
                                     4,
                                     page.close()
                                 ];
-                            case 13:
+                            case 6:
                                 _state.sent();
                                 return [
                                     2,
                                     events
+                                ];
+                            case 7:
+                                error = _state.sent();
+                                // console.log(error);
+                                return [
+                                    2,
+                                    []
+                                ];
+                            case 8:
+                                return [
+                                    2
                                 ];
                         }
                     });
@@ -277,10 +275,16 @@ export var BookMyshow = /*#__PURE__*/ function() {
             key: "scrapeBookMyShowMainPage",
             value: function scrapeBookMyShowMainPage(page) {
                 return _async_to_generator(function() {
-                    var selectorExists, events;
+                    var selectorExists, events, error;
                     return _ts_generator(this, function(_state) {
                         switch(_state.label){
                             case 0:
+                                _state.trys.push([
+                                    0,
+                                    5,
+                                    ,
+                                    6
+                                ]);
                                 return [
                                     4,
                                     page.evaluate(function() {
@@ -338,6 +342,17 @@ export var BookMyshow = /*#__PURE__*/ function() {
                                 return [
                                     2,
                                     events
+                                ];
+                            case 5:
+                                error = _state.sent();
+                                // console.log(error);
+                                return [
+                                    2,
+                                    []
+                                ];
+                            case 6:
+                                return [
+                                    2
                                 ];
                         }
                     });
