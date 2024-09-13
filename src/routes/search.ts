@@ -36,7 +36,7 @@ router.get("/search", async(req:any,res:any) => {
             data: response,
         });
     }catch(error){
-        logger.log(error);
+        console.log(error);
         res.status(500).json({
             message: "internal server error occured",
         });

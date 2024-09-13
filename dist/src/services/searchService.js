@@ -167,7 +167,6 @@ function _ts_generator(thisArg, body) {
     }
 }
 import { puppeteerService } from "./puppeteerService.js";
-import logger from "../logger/logger.js";
 import { BookMyshow } from "../resource/bookmyshow.js";
 import { InsiderIN } from "../resource/insider.in.js";
 import { Allevents } from "../resource/allevents.js";
@@ -230,7 +229,7 @@ export var SearchService = /*#__PURE__*/ function() {
                                     3,
                                     5
                                 ];
-                                logger.log("Processing BookMyShow URL: ".concat(url));
+                                console.log("Processing BookMyShow URL: ".concat(url));
                                 return [
                                     4,
                                     bookmyshowservice.scrapeBookMyShow(url)
@@ -247,7 +246,7 @@ export var SearchService = /*#__PURE__*/ function() {
                                     3,
                                     7
                                 ];
-                                logger.log("Processing InsiderIN URL: ".concat(url));
+                                console.log("Processing InsiderIN URL: ".concat(url));
                                 return [
                                     4,
                                     insiderinservice.scrapeInsiderIn(url)
@@ -264,7 +263,7 @@ export var SearchService = /*#__PURE__*/ function() {
                                     3,
                                     9
                                 ];
-                                logger.log("Processing Allevents URL: ".concat(url));
+                                console.log("Processing Allevents URL: ".concat(url));
                                 return [
                                     4,
                                     alleventsservice.scrapeAllevents(url)
@@ -313,7 +312,7 @@ export var SearchService = /*#__PURE__*/ function() {
                                 ];
                             case 14:
                                 error = _state.sent();
-                                logger.log(error);
+                                console.log(error);
                                 throw new Error("error while getting events data");
                             case 15:
                                 return [
